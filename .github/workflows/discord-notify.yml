@@ -17,6 +17,11 @@ jobs:
           ACTOR: ${{ github.actor }}
           EVENT: ${{ github.event_name }}
         run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "ERROR: Discord Webhook URL is missing!"
+            exit 1
+          fi
+
           CONTENT="📢 TOHPko Update!
           Repository: ${REPO}
           Event: ${EVENT}
@@ -26,7 +31,4 @@ jobs:
           jq -n --arg content "$CONTENT" \
             '{content: $content}' > payload.json
 
-          curl --fail-with-body --silent --show-error -X POST \
-            -H "Content-Type: application/json" \
-            -d @payload.json \
-            "$DISCORD_WEBHOOK_URL"
+          curl --fail-with-body --silent --show-error --request POST --header "Content-Type: application/json" --data-binary @payload.json "$DISCORD_WEBHOOK_URL"
