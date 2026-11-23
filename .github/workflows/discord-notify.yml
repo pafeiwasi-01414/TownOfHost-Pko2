@@ -1,0 +1,32 @@
+name: Discord Notification
+
+on:
+  push:
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          REPO: ${{ github.repository }}
+          ACTOR: ${{ github.actor }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          CONTENT="📢 TOHPko Update!
+          Repository: ${REPO}
+          Event: ${EVENT}
+          User: ${ACTOR}
+          Commit: ${GITHUB_SERVER_URL}/${REPO}/commit/${GITHUB_SHA}"
+
+          jq -n --arg content "$CONTENT" \
+            '{content: $content}' > payload.json
+
+          curl --fail-with-body --silent --show-error -X POST \
+            -H "Content-Type: application/json" \
+            -d @payload.json \
+            "$DISCORD_WEBHOOK_URL"
