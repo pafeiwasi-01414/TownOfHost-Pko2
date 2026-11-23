@@ -22,7 +22,7 @@ jobs:
             exit 1
           fi
 
-          CONTENT="📢 TOHPko Update!
+          CONTENT="Pは☺️ 平和！Kは🤯 カオス！Oは💥 爆発のもと💀！
           Repository: ${REPO}
           Event: ${EVENT}
           User: ${ACTOR}
